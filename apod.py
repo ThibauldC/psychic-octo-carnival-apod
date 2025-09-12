@@ -12,7 +12,6 @@ logging.basicConfig(level=logging.INFO)
 
 @dataclass
 class AstronomyPicture:
-    copyright: str
     date: str
     explanation: str
     hdurl: str
@@ -20,6 +19,7 @@ class AstronomyPicture:
     service_version: str
     title: str
     url: str
+    copyright: str | None = None
 
 def get_astronomy_pic_from_nasa(today: datetime.date) -> AstronomyPicture:
     api_key = os.environ["NASA_API_KEY"]
