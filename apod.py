@@ -1,3 +1,10 @@
+# /// script
+# dependencies = [
+#   "requests>=2.32.5",
+#   "slack-sdk>=3.36.0",
+# ]
+# ///
+
 from dataclasses import dataclass
 from datetime import datetime
 import logging
