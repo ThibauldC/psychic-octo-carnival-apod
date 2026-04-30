@@ -21,11 +21,11 @@ logging.basicConfig(level=logging.INFO)
 class AstronomyPicture:
     date: str
     explanation: str
-    hdurl: str
     media_type: str
     service_version: str
     title: str
     url: str
+    hdurl: str | None = None
     copyright: str | None = None
 
 def get_astronomy_pic_from_nasa(today: datetime.date) -> AstronomyPicture:
@@ -45,32 +45,35 @@ def send_astronomy_pic(pic: AstronomyPicture):
     bot_token = os.environ["SLACK_BOT_TOKEN"]
     channel_id = os.environ["SLACK_CHANNEL_ID"]
     client = WebClient(token=bot_token)
-    client.chat_postMessage(
-        channel=channel_id,
-        blocks=[
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*Todays astronomy picture of the day* :rocket:*:*\n\n {pic.title}",
-                },
+
+    blocks = [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": f"*Todays astronomy picture of the day* :rocket:*:*\n\n {pic.title}",
             },
-            {"type": "divider"},
-            {
-                "type": "image",
-                "image_url": pic.hdurl,
-                "alt_text": pic.explanation
-            },
-            {"type": "divider"},
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": pic.explanation,
-                },
-            }
-        ]
-    )
+        },
+        {"type": "divider"},
+    ]
+
+    if pic.hdurl:
+        blocks.append({
+            "type": "image",
+            "image_url": pic.hdurl,
+            "alt_text": pic.explanation
+        })
+        blocks.append({"type": "divider"})
+
+    blocks.append({
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": pic.explanation,
+        },
+    })
+
+    client.chat_postMessage(channel=channel_id, text=f"Today's Astronomy Picture: {pic.title}", blocks=blocks)
 
 
 if __name__ == "__main__":
